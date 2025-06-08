@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=900, initial-scale=1.0">
+    <title>Übung: Lineare Funktionen – Interaktives Koordinatensystem</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f5f5f5; }
+        .container { max-width: 1200px; margin: 20px auto; background: #fff; border-radius: 12px; box-shadow: 0 2px 10px #0002; padding: 32px 24px; }
+        h1, h2, h3 { color: #1d3557; }
+        .nav { text-align: right; margin-bottom: 15px;}
+        .nav button { padding: 8px 20px; border-radius: 5px; border:none; background:#457b9d; color: #fff; font-weight: bold; margin-left: 10px; cursor:pointer;}
+        .nav button.active { background:#1d3557;}
+        .info-box { background: #e3f2fd; padding:18px; border-radius:8px; margin-bottom: 20px; }
+        table { border-collapse: collapse; margin: 16px 0; }
+        th, td { border: 1px solid #bdbdbd; padding: 8px 12px; text-align: center;}
+        th { background:#a5d8ff;}
+        input[type="number"] { width: 60px; padding: 4px;}
+        .aufgaben-container { margin-bottom: 36px; }
+        .canvas-section { margin-top:30px; }
+        .hint { font-size: 13px; color:#888; }
+        .toolbar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .toolbar button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        .toolbar button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .toolbar button.active {
+            background-color: #2196F3;
+            color: white;
+        }
+        .tool-group {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+            padding: 5px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+        }
+        #canvas-container {
+            position: relative;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            background-color: white;
+            width: 800px;
+            height: 600px;
+        }
+        #coordinateCanvas {
+            display: block;
+            cursor: crosshair;
+        }
+        .text-input {
+            position: absolute;
+            padding: 5px;
+            border: 2px dashed #2196F3;
+            background-color: rgba(255, 255, 255, 0.9);
+            font-size: 16px;
+            font-family: Arial, sans-serif;
+            outline: none;
+            min-width: 100px;
+            min-height: 30px;
+            resize: both;
+            overflow: auto;
+        }
+        .text-input.finished {
+            border: none;
+            background-color: transparent;
+            resize: none;
+            cursor: move;
+        }
+        .color-picker {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        input[type="range"] {
+            width: 100px;
+        }
+        .info {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e3f2fd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        label {
+            font-weight: bold;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="nav">
+        <button id="toIntro" class="active">1. Einführung</button>
+        <button id="toUebungen">2. Übungen</button>
+    </div>
+    <!-- Seite 1: Einführung -->
+    <div id="seite1">
+        <h1>Einführung: Lineare Funktionen</h1>
+        <div class="info-box">
+            <h2>Was ist eine lineare Funktion?</h2>
+            <p>
+                Eine <b>lineare Funktion</b> ist eine Funktion der Form <b>y = mx + b</b>.<br>
+                <ul>
+                    <li><b>m</b> ist die Steigung (wie stark steigt oder fällt der Graph?)</li>
+                    <li><b>b</b> ist der y-Achsenabschnitt (wo schneidet der Graph die y-Achse?)</li>
+                </ul>
+                Der Graph einer linearen Funktion ist immer eine Gerade.
+            </p>
+        </div>
+        <h3>Beispiel:</h3>
+        <div>
+            <p>Betrachten wir die Funktion <b>y = 2x + 1</b>:</p>
+            <table>
+                <tr><th>x</th><td>-2</td><td>-1</td><td>0</td><td>1</td><td>2</td></tr>
+                <tr><th>y</th><td>-3</td><td>-1</td><td>1</td><td>3</td><td>5</td></tr>
+            </table>
+            <div class="hint">Setze die x-Werte in die Funktionsgleichung ein, um die y-Werte zu berechnen!</div>
+        </div>
+        <div>
+            <p>Im nächsten Schritt trägst du eigene Werte in Wertetabellen ein und zeichnest die Funktionsgraphen ins Koordinatensystem!</p>
+        </div>
+    </div>
+    <!-- Seite 2: Übungen -->
+    <div id="seite2" style="display:none;">
+        <h1>Übungen zu linearen Funktionen</h1>
+        <div class="aufgaben-container" id="pdf-aufgabenbereich">
+            <h3>1. Aufgabe: y = x + 2</h3>
+            <p>Trage für die Funktion <b>y = x + 2</b> die y-Werte in die Tabelle ein.</p>
+            <table>
+                <tr>
+                    <th>x</th>
+                    <td><input type="number" value="-2" readonly></td>
+                    <td><input type="number" value="0" readonly></td>
+                    <td><input type="number" value="2" readonly></td>
+                </tr>
+                <tr>
+                    <th>y</th>
+                    <td><input type="number" id="y1a"></td>
+                    <td><input type="number" id="y1b"></td>
+                    <td><input type="number" id="y1c"></td>
+                </tr>
+            </table>
+            <button onclick="autoFill('y = x + 2', ['y1a','y1b','y1c'], [-2,0,2])">Y-Werte automatisch berechnen</button>
+            <h3>2. Aufgabe: y = -2x + 1</h3>
+            <p>Trage für die Funktion <b>y = -2x + 1</b> die y-Werte in die Tabelle ein.</p>
+            <table>
+                <tr>
+                    <th>x</th>
+                    <td><input type="number" value="-1" readonly></td>
+                    <td><input type="number" value="1" readonly></td>
+                    <td><input type="number" value="3" readonly></td>
+                </tr>
+                <tr>
+                    <th>y</th>
+                    <td><input type="number" id="y2a"></td>
+                    <td><input type="number" id="y2b"></td>
+                    <td><input type="number" id="y2c"></td>
+                </tr>
+            </table>
+            <button onclick="autoFill('y = -2x + 1', ['y2a','y2b','y2c'], [-1,1,3])">Y-Werte automatisch berechnen</button>
+            <h3>3. Aufgabe: y = 0.5x - 3</h3>
+            <p>Trage für die Funktion <b>y = 0.5x - 3</b> die y-Werte in die Tabelle ein.</p>
+            <table>
+                <tr>
+                    <th>x</th>
+                    <td><input type="number" value="0" readonly></td>
+                    <td><input type="number" value="4" readonly></td>
+                    <td><input type="number" value="8" readonly></td>
+                </tr>
+                <tr>
+                    <th>y</th>
+                    <td><input type="number" id="y3a"></td>
+                    <td><input type="number" id="y3b"></td>
+                    <td><input type="number" id="y3c"></td>
+                </tr>
+            </table>
+            <button onclick="autoFill('y = 0.5x - 3', ['y3a','y3b','y3c'], [0,4,8])">Y-Werte automatisch berechnen</button>
+        </div>
+        <div class="canvas-section">
+            <h2>Interaktives Koordinatensystem</h2>
+            <p>Trage die Punkte aus den Wertetabellen ins Koordinatensystem ein und zeichne die Funktionsgraphen!</p>
+            <div class="toolbar">
+                <div class="tool-group">
+                    <button id="drawBtn" class="active">✏️ Freihand</button>
+                    <button id="pointBtn">• Punkt</button>
+                    <button id="lineBtn">📏 Linie</button>
+                    <button id="circleBtn">⭕ Kreis</button>
+                    <button id="rectBtn">▢ Rechteck</button>
+                    <button id="textBtn">📝 Text</button>
+                    <button id="eraseBtn">🧹 Löschen</button>
+                </div>
+                <div class="tool-group">
+                    <label>Farbe:</label>
+                    <input type="color" id="colorPicker" class="color-picker" value="#000000">
+                </div>
+                <div class="tool-group">
+                    <label>Strichstärke:</label>
+                    <input type="range" id="lineWidth" min="1" max="10" value="2">
+                    <span id="lineWidthValue">2</span>
+                </div>
+                <div class="tool-group">
+                    <button id="clearBtn" style="background-color: #f44336; color: white;">🗑️ Alles löschen</button>
+                    <button id="downloadBtn" style="background-color: #4CAF50; color: white;">📄 PDF Export</button>
+                </div>
+            </div>
+            <div id="canvas-container">
+                <canvas id="coordinateCanvas"></canvas>
+            </div>
+            <div class="info">
+                <strong>Bedienung:</strong><br>
+                • <strong>Freihand:</strong> Klicken und ziehen zum Zeichnen<br>
+                • <strong>Punkt:</strong> Klicken/tippen auf gewünschte Stelle platziert einen Punkt<br>
+                • <strong>Linie:</strong> Klicken für Startpunkt, nochmal klicken für Endpunkt<br>
+                • <strong>Kreis:</strong> Klicken für Mittelpunkt, nochmal klicken für Radius<br>
+                • <strong>Rechteck:</strong> Klicken für erste Ecke, nochmal klicken für gegenüberliegende Ecke<br>
+                • <strong>Text:</strong> Klicken zum Platzieren, Text eingeben, außerhalb klicken zum Bestätigen<br>
+                • <strong>Text verschieben:</strong> Fertige Textfelder können mit der Maus verschoben werden<br>
+                • <strong>Text bearbeiten:</strong> Doppelklick auf ein Textfeld zum Bearbeiten<br>
+                • <strong>Löschen:</strong> Über gezeichnete Elemente fahren zum Löschen
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    // Navigation
+    document.getElementById('toIntro').onclick = function() {
+        document.getElementById('seite1').style.display = '';
+        document.getElementById('seite2').style.display = 'none';
+        this.classList.add('active');
+        document.getElementById('toUebungen').classList.remove('active');
+    };
+    document.getElementById('toUebungen').onclick = function() {
+        document.getElementById('seite1').style.display = 'none';
+        document.getElementById('seite2').style.display = '';
+        this.classList.add('active');
+        document.getElementById('toIntro').classList.remove('active');
+    };
+    function autoFill(formel, yIds, xVals) {
+        for (let i=0; i<yIds.length; ++i) {
+            let x = xVals[i];
+            let y;
+            switch (formel) {
+                case 'y = x + 2': y = x + 2; break;
+                case 'y = -2x + 1': y = -2*x + 1; break;
+                case 'y = 0.5x - 3': y = 0.5*x - 3; break;
+            }
+            document.getElementById(yIds[i]).value = y;
+        }
+    }
+
+    // --- Interaktives Koordinatensystem JS ---
+    const canvas = document.getElementById('coordinateCanvas');
+    const ctx = canvas.getContext('2d');
+    const container = document.getElementById('canvas-container');
+
+    const CANVAS_WIDTH = 800;
+    const CANVAS_HEIGHT = 600;
+    canvas.width = CANVAS_WIDTH;
+    canvas.height = CANVAS_HEIGHT;
+
+    let currentTool = 'draw';
+    let isDrawing = false;
+    let startX, startY;
+    let currentColor = '#000000';
+    let currentLineWidth = 2;
+
+    let drawings = [];
+    let currentPath = [];
+
+    const gridSize = 20;
+    const originX = CANVAS_WIDTH / 2;
+    const originY = CANVAS_HEIGHT / 2;
+
+    function drawCoordinateSystem() {
+        ctx.save();
+        ctx.fillStyle = 'white';
+        ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+        ctx.strokeStyle = '#e0e0e0';
+        ctx.lineWidth = 1;
+        for (let x = 0; x < CANVAS_WIDTH; x += gridSize) {
+            ctx.beginPath();
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x, CANVAS_HEIGHT);
+            ctx.stroke();
+        }
+        for (let y = 0; y < CANVAS_HEIGHT; y += gridSize) {
+            ctx.beginPath();
+            ctx.moveTo(0, y);
+            ctx.lineTo(CANVAS_WIDTH, y);
+            ctx.stroke();
+        }
+
+        ctx.strokeStyle = '#333333';
+        ctx.lineWidth = 2;
+
+        ctx.beginPath();
+        ctx.moveTo(0, originY);
+        ctx.lineTo(CANVAS_WIDTH, originY);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(originX, 0);
+        ctx.lineTo(originX, CANVAS_HEIGHT);
+        ctx.stroke();
+
+        ctx.fillStyle = '#333333';
+        ctx.font = '12px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'top';
+        for (let x = -15; x <= 15; x++) {
+            if (x !== 0) {
+                const posX = originX + x * gridSize;
+                ctx.fillText(x.toString(), posX, originY + 5);
+            }
+        }
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'middle';
+        for (let y = -13; y <= 13; y++) {
+            if (y !== 0) {
+                const posY = originY - y * gridSize;
+                ctx.fillText(y.toString(), originX + 5, posY);
+            }
+        }
+        ctx.fillStyle = '#333333';
+        ctx.beginPath();
+        ctx.moveTo(CANVAS_WIDTH - 10, originY - 5);
+        ctx.lineTo(CANVAS_WIDTH, originY);
+        ctx.lineTo(CANVAS_WIDTH - 10, originY + 5);
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.moveTo(originX - 5, 10);
+        ctx.lineTo(originX, 0);
+        ctx.lineTo(originX + 5, 10);
+        ctx.fill();
+
+        ctx.font = '14px Arial';
+        ctx.fillText('x', CANVAS_WIDTH - 20, originY - 20);
+        ctx.fillText('y', originX + 20, 20);
+
+        ctx.restore();
+    }
+
+    function redrawAll() {
+        drawCoordinateSystem();
+        drawings.forEach(drawing => {
+            ctx.save();
+            ctx.strokeStyle = drawing.color;
+            ctx.lineWidth = drawing.lineWidth;
+            if (drawing.type === 'path' && drawing.points.length > 1) {
+                ctx.beginPath();
+                ctx.moveTo(drawing.points[0].x, drawing.points[0].y);
+                for (let i = 1; i < drawing.points.length; i++) {
+                    ctx.lineTo(drawing.points[i].x, drawing.points[i].y);
+                }
+                ctx.stroke();
+            } else if (drawing.type === 'line') {
+                ctx.beginPath();
+                ctx.moveTo(drawing.startX, drawing.startY);
+                ctx.lineTo(drawing.endX, drawing.endY);
+                ctx.stroke();
+            } else if (drawing.type === 'circle') {
+                ctx.beginPath();
+                ctx.arc(drawing.centerX, drawing.centerY, drawing.radius, 0, 2 * Math.PI);
+                ctx.stroke();
+            } else if (drawing.type === 'rectangle') {
+                ctx.strokeRect(drawing.x, drawing.y, drawing.width, drawing.height);
+            } else if (drawing.type === 'point') {
+                ctx.beginPath();
+                ctx.arc(drawing.x, drawing.y, drawing.radius, 0, 2 * Math.PI);
+                ctx.fillStyle = drawing.color;
+                ctx.fill();
+            }
+            ctx.restore();
+        });
+    }
+
+    // Werkzeug "Punkt"
+    document.getElementById('pointBtn').addEventListener('click', function() {
+        currentTool = 'point';
+        canvas.style.cursor = 'pointer';
+        isDrawing = false;
+        updateActiveButton(this);
+    });
+
+    // Andere Werkzeuge
+    document.getElementById('drawBtn').addEventListener('click', function() {
+        currentTool = 'draw';
+        canvas.style.cursor = 'crosshair';
+        isDrawing = false;
+        updateActiveButton(this);
+    });
+    document.getElementById('lineBtn').addEventListener('click', function() {
+        currentTool = 'line';
+        canvas.style.cursor = 'crosshair';
+        isDrawing = false;
+        updateActiveButton(this);
+    });
+    document.getElementById('circleBtn').addEventListener('click', function() {
+        currentTool = 'circle';
+        canvas.style.cursor = 'crosshair';
+        isDrawing = false;
+        updateActiveButton(this);
+    });
+    document.getElementById('rectBtn').addEventListener('click', function() {
+        currentTool = 'rectangle';
+        canvas.style.cursor = 'crosshair';
+        isDrawing = false;
+        updateActiveButton(this);
+    });
+    document.getElementById('textBtn').addEventListener('click', function() {
+        currentTool = 'text';
+        canvas.style.cursor = 'text';
+        updateActiveButton(this);
+    });
+    document.getElementById('eraseBtn').addEventListener('click', function() {
+        currentTool = 'erase';
+        canvas.style.cursor = 'grab';
+        updateActiveButton(this);
+    });
+
+    function updateActiveButton(activeBtn) {
+        document.querySelectorAll('.toolbar button').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        activeBtn.classList.add('active');
+    }
+
+    document.getElementById('colorPicker').addEventListener('change', (e) => {
+        currentColor = e.target.value;
+    });
+    document.getElementById('lineWidth').addEventListener('input', (e) => {
+        currentLineWidth = e.target.value;
+        document.getElementById('lineWidthValue').textContent = e.target.value;
+    });
+
+    document.getElementById('clearBtn').addEventListener('click', () => {
+        if (confirm('Wirklich alles löschen?')) {
+            drawings = [];
+            container.querySelectorAll('.text-input').forEach(input => input.remove());
+            drawCoordinateSystem();
+        }
+    });
+
+    // Canvas: Zeichnen und Punktsetzen
+    canvas.addEventListener('mousedown', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        if (currentTool === 'draw') {
+            isDrawing = true;
+            currentPath = [{x, y}];
+        } else if (currentTool === 'point') {
+            // Punkt zeichnen und speichern
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(x, y, 7, 0, 2 * Math.PI); // Punkt-Radius ggf. anpassen
+            ctx.fillStyle = currentColor;
+            ctx.fill();
+            ctx.restore();
+            drawings.push({
+                type: 'point',
+                x: x,
+                y: y,
+                color: currentColor,
+                radius: 7
+            });
+        } else if (currentTool === 'line' || currentTool === 'circle' || currentTool === 'rectangle') {
+            if (!isDrawing) {
+                startX = x;
+                startY = y;
+                isDrawing = true;
+            } else {
+                if (currentTool === 'line') {
+                    drawings.push({
+                        type: 'line',
+                        startX: startX,
+                        startY: startY,
+                        endX: x,
+                        endY: y,
+                        color: currentColor,
+                        lineWidth: currentLineWidth
+                    });
+                } else if (currentTool === 'circle') {
+                    const radius = Math.sqrt(Math.pow(x - startX, 2) + Math.pow(y - startY, 2));
+                    drawings.push({
+                        type: 'circle',
+                        centerX: startX,
+                        centerY: startY,
+                        radius: radius,
+                        color: currentColor,
+                        lineWidth: currentLineWidth
+                    });
+                } else if (currentTool === 'rectangle') {
+                    drawings.push({
+                        type: 'rectangle',
+                        x: Math.min(startX, x),
+                        y: Math.min(startY, y),
+                        width: Math.abs(x - startX),
+                        height: Math.abs(y - startY),
+                        color: currentColor,
+                        lineWidth: currentLineWidth
+                    });
+                }
+                redrawAll();
+                isDrawing = false;
+            }
+        } else if (currentTool === 'text') {
+            createTextInput(x, y);
+        }
+    });
+
+    canvas.addEventListener('mousemove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        if (currentTool === 'draw' && isDrawing) {
+            currentPath.push({x, y});
+            ctx.strokeStyle = currentColor;
+            ctx.lineWidth = currentLineWidth;
+            ctx.beginPath();
+            ctx.moveTo(currentPath[currentPath.length - 2].x, currentPath[currentPath.length - 2].y);
+            ctx.lineTo(x, y);
+            ctx.stroke();
+        } else if ((currentTool === 'line' || currentTool === 'circle' || currentTool === 'rectangle') && isDrawing) {
+            redrawAll();
+            ctx.save();
+            ctx.strokeStyle = currentColor;
+            ctx.lineWidth = currentLineWidth;
+            ctx.setLineDash([5, 5]);
+            if (currentTool === 'line') {
+                ctx.beginPath();
+                ctx.moveTo(startX, startY);
+                ctx.lineTo(x, y);
+                ctx.stroke();
+            } else if (currentTool === 'circle') {
+                const radius = Math.sqrt(Math.pow(x - startX, 2) + Math.pow(y - startY, 2));
+                ctx.beginPath();
+                ctx.arc(startX, startY, radius, 0, 2 * Math.PI);
+                ctx.stroke();
+            } else if (currentTool === 'rectangle') {
+                ctx.strokeRect(
+                    Math.min(startX, x),
+                    Math.min(startY, y),
+                    Math.abs(x - startX),
+                    Math.abs(y - startY)
+                );
+            }
+            ctx.restore();
+        } else if (currentTool === 'erase') {
+            const eraseRadius = 10;
+            drawings = drawings.filter(drawing => {
+                if (drawing.type === 'path') {
+                    return !drawing.points.some(point =>
+                        Math.sqrt(Math.pow(point.x - x, 2) + Math.pow(point.y - y, 2)) < eraseRadius
+                    );
+                } else if (drawing.type === 'line') {
+                    return distanceToLine(x, y, drawing.startX, drawing.startY, drawing.endX, drawing.endY) > eraseRadius;
+                } else if (drawing.type === 'circle') {
+                    const distToCenter = Math.sqrt(Math.pow(drawing.centerX - x, 2) + Math.pow(drawing.centerY - y, 2));
+                    return Math.abs(distToCenter - drawing.radius) > eraseRadius;
+                } else if (drawing.type === 'rectangle') {
+                    const rect = {
+                        left: drawing.x,
+                        right: drawing.x + drawing.width,
+                        top: drawing.y,
+                        bottom: drawing.y + drawing.height
+                    };
+                    const distances = [
+                        distanceToLine(x, y, rect.left, rect.top, rect.right, rect.top),
+                        distanceToLine(x, y, rect.right, rect.top, rect.right, rect.bottom),
+                        distanceToLine(x, y, rect.right, rect.bottom, rect.left, rect.bottom),
+                        distanceToLine(x, y, rect.left, rect.bottom, rect.left, rect.top)
+                    ];
+                    return Math.min(...distances) > eraseRadius;
+                } else if (drawing.type === 'point') {
+                    const dist = Math.sqrt(Math.pow(drawing.x - x, 2) + Math.pow(drawing.y - y, 2));
+                    return dist > eraseRadius;
+                }
+                return true;
+            });
+            redrawAll();
+        }
+    });
+
+    canvas.addEventListener('mouseup', () => {
+        if (currentTool === 'draw' && isDrawing) {
+            if (currentPath.length > 1) {
+                drawings.push({
+                    type: 'path',
+                    points: [...currentPath],
+                    color: currentColor,
+                    lineWidth: currentLineWidth
+                });
+            }
+            isDrawing = false;
+            currentPath = [];
+        }
+    });
+
+    function distanceToLine(px, py, x1, y1, x2, y2) {
+        const A = px - x1;
+        const B = py - y1;
+        const C = x2 - x1;
+        const D = y2 - y1;
+        const dot = A * C + B * D;
+        const lenSq = C * C + D * D;
+        let param = -1;
+        if (lenSq !== 0) param = dot / lenSq;
+        let xx, yy;
+        if (param < 0) {
+            xx = x1;
+            yy = y1;
+        } else if (param > 1) {
+            xx = x2;
+            yy = y2;
+        } else {
+            xx = x1 + param * C;
+            yy = y1 + param * D;
+        }
+        const dx = px - xx;
+        const dy = py - yy;
+        return Math.sqrt(dx * dx + dy * dy);
+    }
+
+    function createTextInput(x, y) {
+        const input = document.createElement('div');
+        input.className = 'text-input';
+        input.contentEditable = true;
+        input.style.left = x + 'px';
+        input.style.top = y + 'px';
+        input.style.color = currentColor;
+        container.appendChild(input);
+        input.focus();
+        input.textContent = 'Text eingeben...';
+        input.addEventListener('focus', function() {
+            if (this.textContent === 'Text eingeben...') {
+                this.textContent = '';
+            }
+        });
+        function finishText() {
+            if (input.textContent.trim() && input.textContent !== 'Text eingeben...') {
+                input.classList.add('finished');
+                input.contentEditable = false;
+                makeTextDraggable(input);
+            } else {
+                input.remove();
+            }
+        }
+        function handleClickOutside(e) {
+            if (!input.contains(e.target)) {
+                finishText();
+                document.removeEventListener('click', handleClickOutside);
+            }
+        }
+        setTimeout(() => {
+            document.addEventListener('click', handleClickOutside);
+        }, 100);
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                finishText();
+                document.removeEventListener('click', handleClickOutside);
+            }
+        });
+    }
+
+    function makeTextDraggable(element) {
+        let isDragging = false;
+        let startX, startY, initialX, initialY;
+        element.addEventListener('mousedown', (e) => {
+            if (element.classList.contains('finished')) {
+                isDragging = true;
+                startX = e.clientX;
+                startY = e.clientY;
+                initialX = parseInt(element.style.left);
+                initialY = parseInt(element.style.top);
+                element.style.cursor = 'grabbing';
+                e.preventDefault();
+            }
+        });
+        document.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                const dx = e.clientX - startX;
+                const dy = e.clientY - startY;
+                element.style.left = (initialX + dx) + 'px';
+                element.style.top = (initialY + dy) + 'px';
+            }
+        });
+        document.addEventListener('mouseup', () => {
+            if (isDragging) {
+                isDragging = false;
+                element.style.cursor = 'move';
+            }
+        });
+        element.addEventListener('dblclick', () => {
+            element.contentEditable = true;
+            element.classList.remove('finished');
+            element.focus();
+            element.addEventListener('blur', function blurHandler() {
+                element.contentEditable = false;
+                element.classList.add('finished');
+                element.removeEventListener('blur', blurHandler);
+            }, { once: true });
+        });
+    }
+
+    document.getElementById('downloadBtn').addEventListener('click', async () => {
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({
+            orientation: 'portrait',
+            unit: 'mm',
+            format: 'a4'
+        });
+
+        const aufgabenbereich = document.getElementById('pdf-aufgabenbereich');
+        const cloneDiv = aufgabenbereich.cloneNode(true);
+        cloneDiv.style.width = "800px";
+        cloneDiv.style.background = "#fff";
+        cloneDiv.style.padding = "20px";
+        document.body.appendChild(cloneDiv);
+
+        const aufgabenImgData = await html2canvas(cloneDiv, {scale:2, backgroundColor: "#fff"}).then(canvas => canvas.toDataURL("image/jpeg", 1.0));
+        document.body.removeChild(cloneDiv);
+
+        const pdfWidth = 190;
+        const pdfHeight = 277;
+        let imgProps = pdf.getImageProperties(aufgabenImgData);
+        let imgWidth = pdfWidth;
+        let imgHeight = (imgProps.height * imgWidth) / imgProps.width;
+        if(imgHeight > pdfHeight) { imgHeight = pdfHeight; imgWidth = (imgProps.width * imgHeight) / imgProps.height; }
+        pdf.addImage(aufgabenImgData, "JPEG", 10, 10, imgWidth, imgHeight);
+
+        pdf.addPage();
+        const canvasContainer = document.getElementById('canvas-container');
+        canvasContainer.querySelectorAll('.text-input').forEach(input => input.classList.add('finished'));
+        const canvasImgData = await html2canvas(canvasContainer, {scale:2, backgroundColor: "#fff"}).then(canvas => canvas.toDataURL("image/png", 1.0));
+        imgProps = pdf.getImageProperties(canvasImgData);
+        imgWidth = pdfWidth;
+        imgHeight = (imgProps.height * imgWidth) / imgProps.width;
+        if(imgHeight > pdfHeight) { imgHeight = pdfHeight; imgWidth = (imgProps.width * imgHeight) / imgProps.height; }
+        pdf.addImage(canvasImgData, "PNG", 10, 10, imgWidth, imgHeight);
+
+        pdf.save('arbeitsblatt_koordinatensystem.pdf');
+    });
+
+    drawCoordinateSystem();
+</script>
+</body>
+</html>
